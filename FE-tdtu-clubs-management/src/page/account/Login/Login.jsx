@@ -14,6 +14,7 @@ function Login() {
         AOS.init();
     }, []);
     const [error, setError] = useState('');
+    // chuc nang Dang xuat
     localStorage.removeItem('accessToken');
     const onSubmit = async (data) => {
         await axiosCli().post('account/login', data).then(res => {
@@ -22,9 +23,9 @@ function Login() {
                 let userInfo = jwtDecode(localStorage.getItem("accessToken"));
                 // console.log(userInfo);
                 if (userInfo.role == '1' || userInfo.role == '2') return window.location.href = '/student'
-                if (userInfo.role == '3') return window.location.href = '/admin/'
+                if (userInfo.role == '3') return window.location.href = '/admin/dashboard'
             } else {
-                setError(res.data)
+                setError(res.data);
                 setTimeout(() => {
                     setError('')
                 }, 2000)
@@ -42,9 +43,8 @@ function Login() {
                 <div className='w-3/4 max-[1200px]:w-5/6 bg-[#171E42] p-8 rounded-2xl'>
                     <div className="mb-6">
                         <h1 className="text-3xl text-white py-2">Đăng Nhập</h1>
-                        {/* <p className="title-color">Liên hệ với chúng tôi để được hỗ trợ nhanh chóng</p> */}
                     </div>
-                    <form onSubmit={handleSubmit(onSubmit)} >
+                    <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="mb-6">
                             <label htmlFor="student_Id" className="block mb-2 text-sm text-gray-900 ">MSSV</label>
                             <input type="text" {...register('student_Id')} placeholder="Nhập MSSV ..." id="student_Id" className="border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5" required />
@@ -61,7 +61,7 @@ function Login() {
                                 <Link to="/register">Chưa có tài khoản ?</Link>
                             </span>
                             <span className="float-right">
-                                <Link to="/register">Quên mật khẩu ?</Link>
+                                <Link to="/forgot-password">Quên mật khẩu ?</Link>
                             </span>
                         </div>
 

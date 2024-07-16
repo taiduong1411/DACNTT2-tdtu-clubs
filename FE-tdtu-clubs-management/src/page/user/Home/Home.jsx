@@ -1,14 +1,26 @@
+import { useEffect, useState } from "react";
 import CarouselHome from "../../../components/Carousel/Carousel";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import { Divider, Pagination } from "antd";
 import { Link } from "react-router-dom";
 import StickyBox from "react-sticky-box";
+import { getDataByParams } from "../../../services/service";
 
 function LazyImage({ src, alt }) {
     return <img src={src} alt={alt} className="w-full h-full hover:scale-125 duration-300 ease-out" loading="lazy" />;
 }
 function Home() {
+    const [newsData, setNewsData] = useState([]);
+    useEffect(() => {
+        getNewsData();
+    }, []);
+    const getNewsData = async () => {
+        await getDataByParams('news/all-news').then(res => {
+            setNewsData(res.data.slice(0, 5));
+        })
+    }
+
     return (
         <div className="">
             <div>
@@ -202,128 +214,58 @@ function Home() {
                         <h1 className="text-3xl">Tin Tức</h1>
                     </Divider>
                 </div>
-                <div className="flex min-h-svh">
-                    <div className="w-2/3 max-[1200px]:w-full px-4 pt-8">
-                        {/*  */}
-                        <div className="transition-transform flex mb-4">
-                            <div className="flex w-1/3 max-[1200px]:pr-2 justify-center items-center mr-4">
-                                <Link to={`/news/`} className="w-full">
-                                    <div className="flex justify-left items-center relative">
-                                        <div className="relative w-[300px] h-[200px] max-w-[380px] max-h-[150px] max-[1200px]:max-h-[100px] max-[1200px]:max-w-[400px] overflow-hidden flex justify-center items-center">
-                                            <img src="https://o.vdoc.vn/data/image/2022/08/25/avatar-cute-meo-con-than-chet.jpg" alt="acc" className="object-cover absolute hover:scale-125 duration-300 ease-out w-full h-full"
-                                            />
+                <div className="flex">
+                    <div className="w-full max-[1200px]:w-full px-4 pt-8">
+                        <div>
+                            {newsData && newsData.length < 1
+                                ?
+                                <div className="text-center">
+                                    <p className="text-Lexend-content text-gray-400">
+                                        Hiện chưa có tin tức.
+                                    </p>
+                                </div>
+                                :
+                                <div>
+                                    {/*  */}
+                                    {newsData && newsData.map((data, index) => (
+                                        <div className="transition-transform flex mb-4" key={index}>
+                                            <div className="flex w-1/3 max-[1200px]:pr-2 justify-center items-center mr-4">
+                                                <Link to={`/student/news/${data.slug}`} className="w-full">
+                                                    <div className="flex justify-left items-center relative">
+                                                        <div className="relative w-[300px] h-[200px] max-w-[380px] max-h-[150px] max-[1200px]:max-h-[100px] max-[1200px]:max-w-[400px] overflow-hidden flex justify-center items-center">
+                                                            <img
+                                                                src={data.imgUrl}
+                                                                alt="acc"
+                                                                className="object-cover absolute hover:scale-125 duration-300 ease-out w-full h-full"
+                                                            />
+                                                            <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">Tin tức mới</span>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                            <div className="w-full">
+                                                <Link to={`/student/news/${data.slug}`}>
+                                                    <h2 className="text-lg max-[1200px]:text-[14px] font-semibold max-[1200px]:mb-0 mb-2 overflow-hidden hover:text-gray-600">{data.title}</h2>
+                                                </Link>
+                                                <span className="text-red-500 max-[1200px]:text-[10px] font-Lexend-content flex items-center text-[12px] mb-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM11 13V17H6V13H11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path></svg>
+                                                    {new Date(data.createdAt).toLocaleDateString('en-GB')}
+                                                </span>
+                                                <p className="text-sm max-[1200px]:text-[12px] text-gray-600 overflow-hidden overflow-ellipsis font-Lexend-content line-clamp-2">{data.sub_Content}</p>
+                                            </div>
                                         </div>
+                                    ))}
+                                    <div className="flex items-center justify-center mb-10">
+                                        <Link className="text-blue-500 hover:text-blue-800 flex items-center" to={'/student/news/all-news'}>
+                                            Xem thêm
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="flex items-center justify-center ml-2" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
+                                        </Link>
                                     </div>
-                                </Link>
-                            </div>
-                            <div className="w-2/3">
-                                <Link to={`/news/`}>
-                                    <h2 className="text-lg max-[1200px]:text-[14px] font-semibold max-[1200px]:mb-0 mb-2 overflow-hidden font-Lexend-title hover:text-gray-600">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</h2>
-                                </Link>
-                                <span className="text-red-500 max-[1200px]:text-[10px] font-Lexend-content flex items-center text-[12px] mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM11 13V17H6V13H11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path></svg>
-                                    14/11/2023
-                                </span>
-                                <p className="text-sm max-[1200px]:text-[12px] text-gray-600 overflow-hidden overflow-ellipsis font-Lexend-content line-clamp-2">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</p>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="transition-transform flex mb-4">
-                            <div className="flex w-1/3 max-[1200px]:pr-2 justify-center items-center mr-4">
-                                <Link to={`/news/`} className="w-full">
-                                    <div className="flex justify-left items-center relative">
-                                        <div className="relative w-[300px] h-[200px] max-w-[380px] max-h-[150px] max-[1200px]:max-h-[100px] max-[1200px]:max-w-[400px] overflow-hidden flex justify-center items-center">
-                                            <img src="https://o.vdoc.vn/data/image/2022/08/25/avatar-cute-meo-con-than-chet.jpg" alt="acc" className="object-cover absolute hover:scale-125 duration-300 ease-out w-full h-full"
-                                            />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-                            <div className="w-2/3">
-                                <Link to={`/news/`}>
-                                    <h2 className="text-lg max-[1200px]:text-[14px] font-semibold max-[1200px]:mb-0 mb-2 overflow-hidden font-Lexend-title hover:text-gray-600">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</h2>
-                                </Link>
-                                <span className="text-red-500 max-[1200px]:text-[10px] font-Lexend-content flex items-center text-[12px] mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM11 13V17H6V13H11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path></svg>
-                                    14/11/2023
-                                </span>
-                                <p className="text-sm max-[1200px]:text-[12px] text-gray-600 overflow-hidden overflow-ellipsis font-Lexend-content line-clamp-2">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</p>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="transition-transform flex mb-4">
-                            <div className="flex w-1/3 max-[1200px]:pr-2 justify-center items-center mr-4">
-                                <Link to={`/news/`} className="w-full">
-                                    <div className="flex justify-left items-center relative">
-                                        <div className="relative w-[300px] h-[200px] max-w-[380px] max-h-[150px] max-[1200px]:max-h-[100px] max-[1200px]:max-w-[400px] overflow-hidden flex justify-center items-center">
-                                            <img src="https://o.vdoc.vn/data/image/2022/08/25/avatar-cute-meo-con-than-chet.jpg" alt="acc" className="object-cover absolute hover:scale-125 duration-300 ease-out w-full h-full"
-                                            />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-                            <div className="w-2/3">
-                                <Link to={`/news/`}>
-                                    <h2 className="text-lg max-[1200px]:text-[14px] font-semibold max-[1200px]:mb-0 mb-2 overflow-hidden font-Lexend-title hover:text-gray-600">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</h2>
-                                </Link>
-                                <span className="text-red-500 max-[1200px]:text-[10px] font-Lexend-content flex items-center text-[12px] mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM11 13V17H6V13H11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path></svg>
-                                    14/11/2023
-                                </span>
-                                <p className="text-sm max-[1200px]:text-[12px] text-gray-600 overflow-hidden overflow-ellipsis font-Lexend-content line-clamp-2">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</p>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="transition-transform flex mb-4">
-                            <div className="flex w-1/3 max-[1200px]:pr-2 justify-center items-center mr-4">
-                                <Link to={`/news/`} className="w-full">
-                                    <div className="flex justify-left items-center relative">
-                                        <div className="relative w-[300px] h-[200px] max-w-[380px] max-h-[150px] max-[1200px]:max-h-[100px] max-[1200px]:max-w-[400px] overflow-hidden flex justify-center items-center">
-                                            <img src="https://o.vdoc.vn/data/image/2022/08/25/avatar-cute-meo-con-than-chet.jpg" alt="acc" className="object-cover absolute hover:scale-125 duration-300 ease-out w-full h-full"
-                                            />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-                            <div className="w-2/3">
-                                <Link to={`/news/`}>
-                                    <h2 className="text-lg max-[1200px]:text-[14px] font-semibold max-[1200px]:mb-0 mb-2 overflow-hidden font-Lexend-title hover:text-gray-600">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</h2>
-                                </Link>
-                                <span className="text-red-500 max-[1200px]:text-[10px] font-Lexend-content flex items-center text-[12px] mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM11 13V17H6V13H11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path></svg>
-                                    14/11/2023
-                                </span>
-                                <p className="text-sm max-[1200px]:text-[12px] text-gray-600 overflow-hidden overflow-ellipsis font-Lexend-content line-clamp-2">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</p>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="transition-transform flex mb-4">
-                            <div className="flex w-1/3 max-[1200px]:pr-2 justify-center items-center mr-4">
-                                <Link to={`/news/`} className="w-full">
-                                    <div className="flex justify-left items-center relative">
-                                        <div className="relative w-[300px] h-[200px] max-w-[380px] max-h-[150px] max-[1200px]:max-h-[100px] max-[1200px]:max-w-[400px] overflow-hidden flex justify-center items-center">
-                                            <img src="https://o.vdoc.vn/data/image/2022/08/25/avatar-cute-meo-con-than-chet.jpg" alt="acc" className="object-cover absolute hover:scale-125 duration-300 ease-out w-full h-full"
-                                            />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-                            <div className="w-2/3">
-                                <Link to={`/news/`}>
-                                    <h2 className="text-lg max-[1200px]:text-[14px] font-semibold max-[1200px]:mb-0 mb-2 overflow-hidden font-Lexend-title hover:text-gray-600">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</h2>
-                                </Link>
-                                <span className="text-red-500 max-[1200px]:text-[10px] font-Lexend-content flex items-center text-[12px] mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 1V3H15V1H17V3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H7V1H9ZM20 11H4V19H20V11ZM11 13V17H6V13H11ZM7 5H4V9H20V5H17V7H15V5H9V7H7V5Z"></path></svg>
-                                    14/11/2023
-                                </span>
-                                <p className="text-sm max-[1200px]:text-[12px] text-gray-600 overflow-hidden overflow-ellipsis font-Lexend-content line-clamp-2">Sáng này 22/9/2018, ngày Hội truyền thống Khoa Khoa học thể thao đã diễn ra hết sức sôi nổi.</p>
-                            </div>
-                        </div>
-                        <div className="mt-4 flex justify-center items-center">
-                            <Pagination defaultCurrent={1} total={20} />
+                                </div>
+                            }
                         </div>
                     </div>
-                    <div className="w-[1/3] max-[1200px]:w-[100%] px-16 max-[1200px]:px-2 max-[1200px]:mt-10 pt-8">
+                    {/* <div className="w-[1/3] max-[1200px]:w-[100%] px-16 max-[1200px]:px-2 max-[1200px]:mt-10 pt-8">
                         <StickyBox offsetTop={90} offsetBottom={90}>
                             <div className="">
                                 <p className="font-bold text-2xl max-[1200px]:text-xl">
@@ -365,7 +307,7 @@ function Home() {
                                 </div>
                             </div>
                         </StickyBox>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div>

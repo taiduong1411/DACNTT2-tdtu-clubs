@@ -5,18 +5,19 @@ import { useEffect, useState, useContext } from "react";
 import { postDataByParams } from "../../../services/service";
 import { useForm } from "react-hook-form";
 import upload from '../../../services/upload';
-import Popup from "../../../components/Popup/Popup";
+// import Popup from "../../../components/Popup/Popup";
 import { UserContext } from "../../../contexts/UserContext";
+import Message from "../../../components/Popup/Message";
 function MyAccount() {
-
     const { studentData, updateStudentData } = useContext(UserContext);
     const [avatarUrl, setAvatarUrl] = useState(null);
+    const [studentId, setStudentId] = useState('');
     useEffect(() => {
         if (studentData && studentData.img) {
             setAvatarUrl(studentData.img);
         }
+        // setStudentId(studentData?.student_Id);
     }, [studentData]);
-
     // HANDLE AVATAR CHANGE
     const [file, setFile] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -35,7 +36,7 @@ function MyAccount() {
         }
         setFile(fileName)
     };
-    // HANDLE SUBMIT FORM
+    // HANDLE AFTER SUBMIT FORM
     const [signal, setSignal] = useState(false);
     const [msg, setMsg] = useState({
         type: '',
@@ -49,13 +50,15 @@ function MyAccount() {
     const [error, setError] = useState("");
     const onUpdateSubmit = async (data) => {
         setShowUploadProgress(!showUploadProgress);
-        const url = await upload(file, 'tdtu_clubs/avatar', setUploadProgress);
+        const cloud = await upload(file, 'tdtu_clubs/avatar', setUploadProgress);
         let allData = {
             full_name: data['full_name'] ? data['full_name'] : studentData.full_name,
             phone: data['phone'] ? data['phone'] : studentData.phone,
             address: data['address'] ? data['address'] : studentData.address,
-            img: url ? url : studentData.img,
+            img: cloud ? cloud.url : studentData.img,
+            email: data['email'] ? data['email'] : studentData.email
         }
+        // console.log(allData);
         if (data['new_password'] != data['confirm_password']) {
             setError('Xác nhận mật khẩu không trùng khớp');
             setTimeout(() => {
@@ -81,14 +84,13 @@ function MyAccount() {
                 }
             }
         await postDataByParams(`account/update-info/${studentData.student_Id}`, allData).then(async res => {
-            // await getAccountInfo();
             setMsg({
                 type: res.status == 200 ? 'success' : 'error',
-                content: res.data,
+                content: res.data.msg,
             });
             setShowUploadProgress(false);
             setSignal(true);
-            updateStudentData(allData);
+            updateStudentData(res.data.student);
         });
     }
     if (!studentData) {
@@ -96,7 +98,7 @@ function MyAccount() {
     }
     return (
         <div className="min-h-svh">
-            <Popup serverMessage={serverMessage} signal={signal} setSignal={setSignal} />
+            <Message serverMessage={serverMessage} signal={signal} setSignal={setSignal} />
             <div>
                 <Header />
             </div>
@@ -125,7 +127,7 @@ function MyAccount() {
                             </div>
                             <div className="mb-6">
                                 <label htmlFor="email" className="block mb-2 text-gray-900 font-bold">Email</label>
-                                <input type="email" defaultValue={studentData && studentData.email} id="email" className="border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5" disabled />
+                                <input type="email" {...register('email')} defaultValue={studentData && studentData.email} id="email" className="border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5" />
                             </div>
                             <div className="mb-6">
                                 <label htmlFor="full_name" className="block mb-2 text-gray-900 font-bold">Họ Và Tên</label>

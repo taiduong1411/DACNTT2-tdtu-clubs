@@ -15,8 +15,8 @@ const upload = async (file, folder, onUploadProgress) => {
             }
         });
 
-        const { url } = res.data;
-        return url;
+        const { url, public_id } = res.data;
+        return { url, public_id };
     } catch (err) {
         console.log(err);
     }

@@ -4,10 +4,11 @@ namespace BE_tdtu_clubs_management.Models
 {
     public class Account
     {
-        public int Id { get; set; }
+        // public int Id { get; set; }
         public string student_Id { get; set; }
         public string full_name { get; set; }
-        public string email { get => $"{student_Id}@gmail.com"; }
+        // public string email { get => $"{student_Id}@gmail.com"; }
+        public string email { get; set; }
         public string password { get; set; }
         public string phone { get; set; }
         public string address { get; set; }
@@ -20,6 +21,7 @@ namespace BE_tdtu_clubs_management.Models
             phone = "";
             address = "";
             img = "";
+            email = "";
         }
     }
 }

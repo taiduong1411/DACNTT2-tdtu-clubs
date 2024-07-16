@@ -1,0 +1,11 @@
+1. Lưu ý khi sử dụng SMTP
+- Kiểm tra kỹ các bước cấu hình trên source code
+- Vào https://mail.google.com/mail/#settings/fwdandpop để mở khoá dịch vụ IMAP
+- Vào https://myaccount.google.com/security để tạo mật khẩu ứng dụng sau đó lấy mã được generate
+
+
+
+2. Các Quy Định Về Quản Lý Status trang News:
+ - 1: Chờ Xét Duyệt
+ - 2: Huỷ Xét Duyệt
+ - 3: Đã Xét Duyệt

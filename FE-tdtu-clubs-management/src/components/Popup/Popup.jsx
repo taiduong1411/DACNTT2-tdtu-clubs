@@ -1,5 +1,4 @@
-import { Modal, Button } from 'antd';
-import { useState } from 'react';
+import { Modal } from 'antd';
 import { useEffect } from 'react';
 
 function Popup({ serverMessage, signal, setSignal }) {
@@ -13,7 +12,7 @@ function Popup({ serverMessage, signal, setSignal }) {
                 content: `Thông báo sẽ ẩn đi sau ${secondsToGo} giây.`,
             });
         } else {
-            var instance = modal.error({
+            let instance = modal.error({
                 title: msg.content,
                 content: `Thông báo sẽ ẩn đi sau ${secondsToGo} giây.`,
             });

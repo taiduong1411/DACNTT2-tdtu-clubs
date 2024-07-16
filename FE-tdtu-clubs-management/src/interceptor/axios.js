@@ -16,9 +16,9 @@ export const axiosCli = () => {
     // Add a request interceptor to add the JWT token to the authorization header
     api.interceptors.request.use(
         (config) => {
-            const email = localStorage.getItem("accessToken");
-            if (email) {
-                config.headers.Authorization = email;
+            const token = localStorage.getItem("accessToken");
+            if (token) {
+                config.headers.Authorization = token;
             }
             return config;
         },
@@ -27,11 +27,22 @@ export const axiosCli = () => {
 
     // Add a response interceptor to refresh the JWT token if it's expired
     // api.interceptors.response.use(
-    //     (res) => {
-    //         if (res.status == 400) {
-    //             localStorage.removeItem("accessToken");
-    //             localStorage.removeItem("level");
+    //     (response) => response,
+    //     (error) => {
+    //         console.log("Interceptor triggered");
+    //         if (error.response) {
+    //             const { status, data } = error.response;
+    //             if (status === 401 && data === "NO_TOKEN") {
+    //                 // No token, redirect to login
+    //                 console.log("No token found, redirecting to login...");
+    //                 // return window.location.href = "/login";
+    //             } else if (status === 403 && data === "INVALID_ROLE") {
+    //                 // Invalid role, redirect to login
+    //                 console.log("Invalid role, redirecting to login...");
+    //                 // return window.location.href = "/login";
+    //             }
     //         }
+    //         return Promise.reject(error);
     //     }
     // );
 
