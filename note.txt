@@ -5,7 +5,7 @@
 
 
 
-2. Các Quy Định Về Quản Lý Status trang News:
+2. Các Quy Định Về Quản Lý Status:
  - 1: Chờ Xét Duyệt
  - 2: Huỷ Xét Duyệt
  - 3: Đã Xét Duyệt

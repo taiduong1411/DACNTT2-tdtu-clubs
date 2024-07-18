@@ -23,6 +23,7 @@ import AdminBlogs from './page/admin/Blog/Blog';
 import MailBoxAdmin from './page/admin/MailBox/MailBoxAdmin';
 import ClubAdmin from './page/admin/Club/ClubAdmin';
 import AddClub from './page/user/AddClub/AddClub';
+import Event from './page/manager/_Event/Event';
 function App() {
   return (
     <BrowserRouter>
@@ -48,6 +49,7 @@ function App() {
         <Route exact path='/' element={<ManagerRoute />}>
           <Route path='/manager/dashboard' element={<Dashboard />} />
           <Route path='/manager/blog-management' element={<Blog />} />
+          <Route path='/manager/event-management' element={<Event />} />
         </Route>
         {/* Admin Route */}
         <Route exact path='/' element={<AdminRoute />}>

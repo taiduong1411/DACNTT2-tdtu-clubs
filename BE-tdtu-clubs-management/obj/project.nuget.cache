@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "95RFcQAtJraIKxyJEfs7tx/MxKst8TBP/oaz/gPuKMHFOhfYCXxD0IWsRItrun2ga2R+iQacZY/RBFi6QEI+tg==",
+  "dgSpecHash": "AKSnpSumgxGGzqxnFG1wT2WKgvJiljgG0BgV8G56FK8OrYWVRVD8S1vDTbCK2sjYrsAHgLkEE8pBL958zBo9wg==",
   "success": true,
-  "projectFilePath": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj",
+  "projectFilePath": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj",
   "expectedPackageFiles": [
     "/Users/taiduong/.nuget/packages/azure.core/1.24.0/azure.core.1.24.0.nupkg.sha512",
     "/Users/taiduong/.nuget/packages/azure.identity/1.6.0/azure.identity.1.6.0.nupkg.sha512",

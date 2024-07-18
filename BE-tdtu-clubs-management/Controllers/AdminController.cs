@@ -102,5 +102,61 @@ namespace BE_tdtu_clubs_management.Controllers
                 return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
             }
         }
+        [HttpDelete("delete-club/{Id}")]
+        public async Task<IActionResult> DeleteClub(int Id)
+        {
+            try
+            {
+                // find club in database by ID
+                var club = await _context.Clubs.FindAsync(Id);
+                if (club == null)
+                {
+                    return NotFound("Khong tim thay du lieu !");
+                }
+                _context.Clubs.Remove(club);
+                await _context.SaveChangesAsync();
+                return Ok(new { msg = "Xóa thành công", success = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
+            }
+        }
+        [HttpGet("accept-club/{id}")]
+        public async Task<IActionResult> AcceptClubById(int id)
+        {
+            try
+            {
+                var clubs = await _context.Clubs.FindAsync(id);
+                if (clubs == null) return NotFound("Khong tim thay du lieu Club");
+                clubs.Status = "3";
+                await _context.SaveChangesAsync();
+                var manager = await _context.Account.FindAsync(clubs.Manager_Id);
+                if (manager == null) return NotFound("Khong tim thay du lieu Manager");
+                manager.role = "2";
+                await _context.SaveChangesAsync();
+                return Ok(new { msg = "Thành công", success = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
+            }
+        }
+        [HttpGet("cancel-club/{id}")]
+        public async Task<IActionResult> CancelClubById(int id)
+        {
+            try
+            {
+                var club = await _context.Clubs.FindAsync(id);
+                if (club == null) return NotFound("Khong tim thay du lieu Club");
+                club.Status = "2";
+                await _context.SaveChangesAsync();
+                return Ok(new { msg = "Đã Từ Chối Tạo CLB", success = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
+            }
+        }
     }
 }

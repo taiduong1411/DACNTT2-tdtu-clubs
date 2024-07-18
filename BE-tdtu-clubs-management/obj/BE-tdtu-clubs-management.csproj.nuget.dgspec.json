@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj": {}
+    "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj": {}
   },
   "projects": {
-    "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj": {
+    "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj",
+        "projectUniqueName": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj",
         "projectName": "BE-tdtu-clubs-management",
-        "projectPath": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj",
+        "projectPath": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/BE-tdtu-clubs-management.csproj",
         "packagesPath": "/Users/taiduong/.nuget/packages/",
-        "outputPath": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/obj/",
+        "outputPath": "/Users/taiduong/Desktop/Khách Hàng/TDTU-Clubs-Management/BE-tdtu-clubs-management/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/taiduong/.nuget/NuGet/NuGet.Config"
