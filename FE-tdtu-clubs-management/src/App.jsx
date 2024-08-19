@@ -24,6 +24,11 @@ import MailBoxAdmin from './page/admin/MailBox/MailBoxAdmin';
 import ClubAdmin from './page/admin/Club/ClubAdmin';
 import AddClub from './page/user/AddClub/AddClub';
 import Event from './page/manager/_Event/Event';
+import ClubDetail from './page/user/ClubDetail/ClubDetail';
+import ClubManagement from './page/manager/Club/ClubManagement';
+import EventAdmin from './page/admin/Event_/EventAdmin';
+import EventTask from './page/manager/_Event/EventTask';
+import Task from './page/user/Task/Task';
 function App() {
   return (
     <BrowserRouter>
@@ -44,12 +49,16 @@ function App() {
           <Route path='/student/news/:slug' element={<News />} />
           <Route path='/student/news/all-news' element={<AllNews />} />
           <Route path='/student/news/tag/:tag' element={<NewsByTag />} />
+          <Route path='/student/club-detail/:id' element={<ClubDetail />} />
+          <Route path='/student/student-task' element={<Task />} />
         </Route>
         {/* Manager Club Route */}
         <Route exact path='/' element={<ManagerRoute />}>
           <Route path='/manager/dashboard' element={<Dashboard />} />
           <Route path='/manager/blog-management' element={<Blog />} />
           <Route path='/manager/event-management' element={<Event />} />
+          <Route path='/manager/club-management' element={<ClubManagement />} />
+          <Route path='/manager/event-manager/event-task/:id' element={<EventTask />} />
         </Route>
         {/* Admin Route */}
         <Route exact path='/' element={<AdminRoute />}>
@@ -57,6 +66,7 @@ function App() {
           <Route path='/admin/blogs' element={<AdminBlogs />} />
           <Route path='/admin/mailbox' element={<MailBoxAdmin />} />
           <Route path='/admin/club' element={<ClubAdmin />} />
+          <Route path='/admin/event' element={<EventAdmin />} />
         </Route>
       </Routes>
     </BrowserRouter>

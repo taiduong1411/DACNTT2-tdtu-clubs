@@ -2,22 +2,39 @@ import { useEffect, useState } from "react";
 import CarouselHome from "../../../components/Carousel/Carousel";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
-import { Divider, Pagination } from "antd";
-import { Link } from "react-router-dom";
-import StickyBox from "react-sticky-box";
+import { Divider } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import { getDataByParams } from "../../../services/service";
+import CryptoJS from 'crypto-js';
 
 function LazyImage({ src, alt }) {
     return <img src={src} alt={alt} className="w-full h-full hover:scale-125 duration-300 ease-out" loading="lazy" />;
 }
 function Home() {
     const [newsData, setNewsData] = useState([]);
+    const [clubsData, setClubsData] = useState([]);
+    const secretKey = 'tdtu_clubs';
+    const encrypt = (text) => {
+        const ciphertext = CryptoJS.AES.encrypt(text, secretKey).toString();
+        const base64Encoded = btoa(ciphertext);
+        // Thay thế các ký tự để an toàn cho URL
+        return base64Encoded.replace(/\//g, '_').replace(/\+/g, '-').replace(/=/g, '.');
+    };
+    const nav = useNavigate();
+
     useEffect(() => {
         getNewsData();
+        getClubData();
     }, []);
     const getNewsData = async () => {
         await getDataByParams('news/all-news').then(res => {
             setNewsData(res.data.slice(0, 5));
+        })
+    }
+    const getClubData = async()=> {
+        await getDataByParams('student/all-clubs').then(res=> {
+            // console.log(res.data);
+            setClubsData(res.data);
         })
     }
 
@@ -35,7 +52,7 @@ function Home() {
                         <h1 className="text-3xl">Câu Lạc Bộ Nổi Bật</h1>
                     </Divider>
                 </div>
-                <div className="flex">
+                {/* <div className="flex">
                     <div className="flex items-center ml-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="flex items-center mr-2" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M10 14L4 5V3H20V5L14 14V20L10 22V14Z"></path></svg>
                         Sắp xếp theo
@@ -44,169 +61,41 @@ function Home() {
                         <option value="week">Tuần</option>
                         <option value="month">Tháng</option>
                     </select>
-                </div>
+                </div> */}
                 <div className="flex container m-auto pt-10">
                     <div className="grid grid-cols-2 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 max-[1200px]:px-4">
-                        {/*  */}
-                        <div className="col-span-4 rounded-xl md:col-span-1 lg:col-span-2 xl:col-span-1 bg-white shadow-md hover:shadow-lg">
-                            <div className="relative">
-                                <div className="transition duration-300 transform card-container md:h-full flex flex-col justify-center">
-                                    <div className="flex justify-center items-center relative">
-                                        <div className="relative overflow-hidden w-[500px] h-[350px] max-w-[500px] max-h-[350px]">
-                                            <LazyImage
-                                                src='https://fss.tdtu.edu.vn/sites/default/files/FSS/C%C3%A2u%20l%E1%BA%A1c%20b%E1%BB%99/CLB%20B%C3%B3ng%20%C4%91%C3%A1.jpg'
-                                                alt='/team.png'
-                                            />
+                    
+                        {clubsData.map((data,index)=> (
+                            <div key={index} className="col-span-4 rounded-xl md:col-span-1 lg:col-span-2 xl:col-span-1 bg-white shadow-md hover:shadow-lg"
+                             onClick={async () => {
+                                    const encryptedId = await encrypt(data.id.toString());
+                                    return nav(`/student/club-detail/${encryptedId}`)
+                                }}>
+                                <div className="relative">
+                                    <div className="transition duration-300 transform card-container md:h-full flex flex-col justify-center">
+                                        <div className="flex justify-center items-center relative">
+                                            <div className="relative overflow-hidden w-[500px] h-[350px] max-w-[500px] max-h-[350px]">
+                                                <LazyImage
+                                                    src={data.imgUrl}
+                                                    alt='/team.png'
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="py-6 px-8 bg-[#171E42] text-white rounded-b-xl min-h-[254px]">
-                                        <strong className="font-Lexend-title text-[24px] text-red-500">
-                                            CLB Bóng Đá
-                                        </strong>
-                                        <br />
-                                        <p className="font-Lexend-content text-[18px] mt-8">
-                                            <span className="overflow-hidden overflow-ellipsis">
-                                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos ut ducimus dignissimos nostrum assumenda molestiae sit, nisi fugiat officiis in repellat commodi ex? Culpa voluptatibus facilis quaerat incidunt accusantium ipsam.
-                                            </span>
-                                        </p>
+                                        <div className="py-6 px-8 bg-[#171E42] text-white rounded-b-xl min-h-[254px]">
+                                            <strong className="font-Lexend-title text-[24px] text-red-500">
+                                                {data.club_name}
+                                            </strong>
+                                            <br />
+                                            <p className="font-Lexend-content text-[18px] mt-8">
+                                                <span className="overflow-hidden overflow-ellipsis">
+                                                   {data.club_description}
+                                                </span>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        {/*  */}
-                        <div className="col-span-4 rounded-xl md:col-span-1 lg:col-span-2 xl:col-span-1 bg-white shadow-md hover:shadow-lg">
-                            <div className="relative">
-                                <div className="transition duration-300 transform card-container md:h-full flex flex-col justify-center">
-                                    <div className="flex justify-center items-center relative">
-                                        <div className="relative overflow-hidden w-[500px] h-[350px] max-w-[500px] max-h-[350px]">
-                                            <LazyImage
-                                                src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgpbtO_8E6akOhZEXe3aKz7crEJLGe5BOUgP56RPfiIQ&s'
-                                                alt='/team.png'
-
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="py-6 px-8 bg-[#171E42] text-white rounded-b-xl min-h-[254px]">
-                                        <strong className="font-Lexend-title text-[24px] text-red-500">
-                                            Kênh hỗ trợ & chăm sóc KH
-                                        </strong>
-                                        <br />
-                                        <p className="font-Lexend-content text-[18px] mt-8">
-                                            <span className="overflow-hidden overflow-ellipsis">
-                                                Website cung cấp một cách liên lạc thuận tiện và nhanh chóng giữa doanh nghiệp và khách hàng, đồng thời hỗ trợ khách hàng trong việc giải đáp thắc mắc và yêu cầu hỗ trợ.
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="col-span-4 rounded-xl md:col-span-1 lg:col-span-2 xl:col-span-1 bg-white shadow-md hover:shadow-lg">
-                            <div className="relative">
-                                <div className="transition duration-300 transform card-container md:h-full flex flex-col justify-center">
-                                    <div className="flex justify-center items-center relative">
-                                        <div className="relative overflow-hidden w-[500px] h-[350px] max-w-[500px] max-h-[350px]">
-                                            <LazyImage
-                                                src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSC2_bkmIMp8SQovi5HcEhXkDBIMLlbJaVbPCNTe4MxnA&s'
-                                                alt='/team.png'
-
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="py-6 px-8 bg-[#171E42] text-white rounded-b-xl min-h-[254px]">
-                                        <strong className="font-Lexend-title text-[24px] text-red-500">
-                                            Luôn luôn hiện diện
-                                        </strong>
-                                        <br />
-                                        <p className="font-Lexend-content text-[18px] mt-8">
-                                            <span className="overflow-hidden overflow-ellipsis">
-                                                Trang web giúp bạn có mặt trực tuyến 24/7, giới thiệu và quảng bá sản phẩm/dịch vụ của bạn cho khách hàng mọi lúc, mọi nơi.
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="col-span-4 rounded-xl md:col-span-1 lg:col-span-2 xl:col-span-1 bg-white shadow-md hover:shadow-lg">
-                            <div className="relative">
-                                <div className="transition duration-300 transform card-container md:h-full flex flex-col justify-center">
-                                    <div className="flex justify-center items-center relative">
-                                        <div className="relative overflow-hidden w-[500px] h-[350px] max-w-[500px] max-h-[350px]">
-                                            <LazyImage
-                                                src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1e270kd0CKLsg1hKDkMow5KSrDpxmxifOqrUHeWKIQg&s'
-                                                alt='/team.png'
-
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="py-6 px-8 bg-[#171E42] text-white rounded-b-xl min-h-[254px]">
-                                        <strong className="font-Lexend-title text-[24px] text-red-500">
-                                            Phát triển trong dài hạn
-                                        </strong>
-                                        <br />
-                                        <p className="font-Lexend-content text-[18px] mt-8">
-                                            <span className="overflow-hidden overflow-ellipsis">
-                                                Sở hữu website với nguồn khách hàng đều đặn chính là giải pháp giúp doanh nghiệp của bạn phát triển trong dài hạn mà không phải phụ thuộc vào các kênh quảng cáo trả phí.
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="col-span-4 rounded-xl md:col-span-1 lg:col-span-2 xl:col-span-1 bg-white shadow-md hover:shadow-lg">
-                            <div className="relative">
-                                <div className="transition duration-300 transform card-container md:h-full flex flex-col justify-center">
-                                    <div className="flex justify-center items-center relative">
-                                        <div className="relative overflow-hidden w-[500px] h-[350px] max-w-[500px] max-h-[350px]">
-                                            <LazyImage
-                                                src='https://fss.tdtu.edu.vn/sites/default/files/FSS/C%C3%A2u%20l%E1%BA%A1c%20b%E1%BB%99/CLB%20Yoga.jpg'
-                                                alt='/team.png'
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="py-6 px-8 bg-[#171E42] text-white rounded-b-xl min-h-[254px]">
-                                        <strong className="font-Lexend-title text-[24px] text-red-500">
-                                            Tăng trải nghiệm khách hàng
-                                        </strong>
-                                        <br />
-                                        <p className="font-Lexend-content text-[18px] mt-8">
-                                            <span className="overflow-hidden overflow-ellipsis">
-                                                Website cung cấp một cách liên lạc thuận tiện và nhanh chóng giữa doanh nghiệp và khách hàng, đồng thời hỗ trợ khách hàng trong việc giải đáp thắc mắc và yêu cầu hỗ trợ.
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {/*  */}
-                        <div className="col-span-4 rounded-xl md:col-span-1 lg:col-span-2 xl:col-span-1 bg-white shadow-md hover:shadow-lg">
-                            <div className="relative">
-                                <div className="transition duration-300 transform card-container md:h-full flex flex-col justify-center">
-                                    <div className="flex justify-center items-center relative">
-                                        <div className="relative overflow-hidden w-[500px] h-[350px] max-w-[500px] max-h-[350px]">
-                                            <LazyImage
-                                                src='https://image.sggp.org.vn/1200x630/Uploaded/2024/aekxqdrkxq/2022_04_30/giai-bong-chuyen-7_OHHJ.jpg.webp'
-                                                alt='/team.png'
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="py-6 px-8 bg-[#171E42] text-white rounded-b-xl min-h-[254px]">
-                                        <strong className="font-Lexend-title text-[24px] text-red-500">
-                                            Dễ dàng cập nhật thông tin
-
-                                        </strong>
-                                        <br />
-                                        <p className="font-Lexend-content text-[18px] mt-8">
-                                            <span className="overflow-hidden overflow-ellipsis">
-                                                Trang web cho phép bạn dễ dàng cập nhật thông tin mới nhất về sản phẩm, dịch vụ, tin tức và chương trình khuyến mãi.
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
                 <div>

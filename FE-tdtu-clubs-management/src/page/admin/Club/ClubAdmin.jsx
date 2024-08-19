@@ -3,8 +3,10 @@ const { Content } = Layout;
 import StickyBox from "react-sticky-box";
 import SideBarAdmin from "../../../components/SideBar/SideBarAdmin";
 import { useEffect, useState } from "react";
-import { getDataByParams } from "../../../services/service";
+import { getDataByParams, postDataByParams } from "../../../services/service";
 import Message from "../../../components/Popup/Message";
+import { useForm } from "react-hook-form";
+import upload from "../../../services/upload";
 const { Search } = Input;
 
 function ClubAdmin() {
@@ -81,7 +83,6 @@ function ClubAdmin() {
     const [dataClubs, setDataClubs] = useState([]);
     const getDataClubs = async () => {
         await getDataByParams('admin/all-clubs').then(res => {
-            
             setDataClubs(res.data);
         })
     }
@@ -141,6 +142,54 @@ function ClubAdmin() {
             getDataClubs();
         }
     }
+    // ADD
+    const [addOpen, setAddOpen] = useState(false);
+    const {register, handleSubmit} = useForm();
+    const [studentID, setStudentID] = useState('');
+    const [error, setError] = useState('');
+    const [studentInfo, setStudentInfo] = useState([]);
+    const [file, setFile] = useState('');
+    const [uploadProgress, setUploadProgress] = useState(0);
+    useEffect(()=> {
+        getStudent();
+    },[studentID])
+    const getStudent = async()=> {
+        await getDataByParams(`account/student-info/${studentID}`).then(res=> {
+            if (res.status == 200) {
+                if (res.data.role == '2') return setError('Người dùng đang quản lý một CLB khác !')
+                setStudentInfo(res.data);
+                setError('');
+            } else {
+                setError('Không tìm thấy dữ liệu !')
+                setStudentInfo([]);
+            }
+        })
+    }
+    const handleInputChange = (e) => {
+        setStudentID(e.target.value);
+    }
+
+    const onCreateSubmit = async(data) => {
+        const cloud = await upload(file, 'tdtu_clubs/clubs', setUploadProgress)
+        const all_data = {
+            club_name: data['club_name'],
+            club_description: data['club_description'],
+            imgUrl: cloud.url,
+            public_Id: cloud.public_id,
+            manager_Id: data['student_Id'],
+            status: '3'
+        }
+        // console.log(all_data);
+        await postDataByParams('admin/create-club', all_data).then(res=> {
+            setMsg({
+                type: res.status == 200 ? 'success' : 'error',
+                content: res.data.msg || res.data,
+            });
+            setSignal(true);
+            setAddOpen(false);
+            getDataClubs();
+        })
+    }
     return (
         <>
             <Message signal={signal} serverMessage={serverMessage} setSignal={setSignal} />
@@ -165,7 +214,22 @@ function ClubAdmin() {
                                 onChange={handleChangeInput}
                             />
                         </div>
-                        <div>
+                        {/* <div className='flex items-center'>
+                            <svg xmlns="http://www.w3.org/2000/svg" className='flex items-center' viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M21 4V6H20L15 13.5V22H9V13.5L4 6H3V4H21ZM6.4037 6L11 12.8944V20H13V12.8944L17.5963 6H6.4037Z"></path></svg>
+                            <select name="filter" id="filter" className='ml-4 flex border p-2 items-center'>
+                                <option value="all">Tất Cả Tin Tức</option>
+                                <option value="2">Tin Chưa Duyệt</option>
+                                <option value="3">Tin Đã Duyệt</option>
+                                <option value="4">Tin Không Duyệt</option>
+                            </select>
+                        </div> */}
+                        <div className="">
+                            <div className=''>
+                                <Button className='bg-blue-500 text-white flex justify-center items-center' type="primary" size='large' onClick={() => setAddOpen(true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' viewBox="0 0 24 24" width="18" height="18" fill="rgba(255,255,255,1)"><path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"></path></svg>
+                                        Tạo CLB
+                                </Button>
+                            </div>
                             <Table dataSource={dataClubs} columns={columns} />
                         </div>
                     </Content>
@@ -175,6 +239,51 @@ function ClubAdmin() {
                 <div>
                     CLB sẽ không được tạo mới. Bạn có muốn tiếp tục ?
                 </div>
+            </Modal>
+            <Modal title= "Tạo Câu Lạc Bộ" width={1000} open={addOpen} onCancel={()=> setAddOpen(false)} okButtonProps={{style: {"display": "none"}}} cancelButtonProps={{style: {"display": "none"}}}>
+            <form onSubmit={handleSubmit(onCreateSubmit)}>
+                        <div className="mt-10 px-8">
+                            <div className="mb-6">
+                                <label htmlFor="club_name" className="block mb-2 text-gray-900 font-bold">Tên CLB</label>
+                                <input type="text" id="club_name" {...register('club_name')} className="border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5" required />
+                            </div>
+                            <div className="mb-6">
+                                <label htmlFor="club_description" className="block mb-2 text-gray-900 font-bold">Mô Tả CLB</label>
+                                <textarea rows={8} type="text" id="club_description" {...register('club_description')} className="border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5" required />
+                            </div>
+                            <div className="mb-6">
+                                <label htmlFor="student_Id" className="block mb-2 text-gray-900 font-bold">Người Quản Lý</label>
+                                <input type="text" id="student_Id" {...register('student_Id')} onChange={handleInputChange} className="border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5" required />
+                            </div>
+                            <div className="mb-6">
+                                <strong className="text-sm py-2">Thông tin người quản lý CLB: </strong>
+                                {studentInfo.length < 1
+                                    ?
+                                    <div></div>
+                                    :
+                                    <div>
+                                        <p className="text-sm py-2"><strong>Họ và tên: </strong>{studentInfo.full_name ? studentInfo.full_name : 'Chưa cập nhật'}</p>
+                                        <p className="text-sm py-2"><strong>Email:</strong> {studentInfo.email ? studentInfo.email : 'Chưa cập nhật'}</p>
+                                        <p className="text-sm py-2"><strong>Số điện thoại:</strong> {studentInfo.phone ? studentInfo.phone : 'Chưa cập nhật'}</p>
+                                        <p className="text-sm py-2"><strong>Địa chỉ:</strong> {studentInfo.address ? studentInfo.address : 'Chưa cập nhật'}</p>
+                                    </div>
+                                }
+                            </div>
+                            <div className="mb-6">
+                                <p className="text-sm text-red-500">{error}</p>
+                            </div>
+                            <div className="mb-6">
+                                <label htmlFor="club_img" className="block mb-2 text-gray-900 font-bold">Hình Ảnh CLB</label>
+                                <input type="file" onChange={(e) => setFile(e.target.files[0])} id="club_img" className="border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5" />
+                            </div>
+                            <div className="flex justify-end">
+                                <button type="submit" className="border px-3 py-2 rounded-lg bg-green-700 text-white flex justify-center items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-1" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.7279 9.57627L14.3137 8.16206L5 17.4758V18.89H6.41421L15.7279 9.57627ZM17.1421 8.16206L18.5563 6.74785L17.1421 5.33363L15.7279 6.74785L17.1421 8.16206ZM7.24264 20.89H3V16.6473L16.435 3.21231C16.8256 2.82179 17.4587 2.82179 17.8492 3.21231L20.6777 6.04074C21.0682 6.43126 21.0682 7.06443 20.6777 7.45495L7.24264 20.89Z"></path></svg>
+                                    Xác Nhận 
+                                </button>
+                            </div>
+                        </div>
+                    </form>
             </Modal>
         </>
     );
