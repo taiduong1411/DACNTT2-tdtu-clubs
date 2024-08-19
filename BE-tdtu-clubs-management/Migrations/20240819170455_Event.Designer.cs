@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BEtdtuclubsmanagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240714134211_ClubsModel")]
-    partial class ClubsModel
+    [Migration("20240819170455_Event")]
+    partial class Event
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,31 @@ namespace BEtdtuclubsmanagement.Migrations
                     b.ToTable("Account");
                 });
 
+            modelBuilder.Entity("BE_tdtu_clubs_management.Models.Club_Members", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Club_id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Student_id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Club_Members");
+                });
+
             modelBuilder.Entity("BE_tdtu_clubs_management.Models.Clubs", b =>
                 {
                     b.Property<int>("Id")
@@ -98,6 +123,80 @@ namespace BEtdtuclubsmanagement.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clubs");
+                });
+
+            modelBuilder.Entity("BE_tdtu_clubs_management.Models.Event_Task", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Event_Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Student_Id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Task_Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Task_End")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Task_Start")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Task_Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("BE_tdtu_clubs_management.Models.Events", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Event_description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Event_end")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Event_image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Event_location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Event_manager")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Event_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Event_start")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Event_status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("BE_tdtu_clubs_management.Models.Mails", b =>
@@ -201,6 +300,43 @@ namespace BEtdtuclubsmanagement.Migrations
                     b.HasKey("Code");
 
                     b.ToTable("OTPs");
+                });
+
+            modelBuilder.Entity("BE_tdtu_clubs_management.Models.Report", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImgId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImgUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Student_Id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Task_Id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Task_Percent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Task_Report")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Reports");
                 });
 #pragma warning restore 612, 618
         }

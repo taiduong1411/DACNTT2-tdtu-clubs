@@ -158,5 +158,110 @@ namespace BE_tdtu_clubs_management.Controllers
                 return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
             }
         }
+        [HttpPost("create-club")]
+        public async Task<IActionResult> CreateClub([FromBody] Clubs club)
+        {
+            if (club == null)
+            {
+                return BadRequest(new { msg = "Invalid news data", success = false });
+            }
+            _context.Clubs.Add(club);
+            await _context.SaveChangesAsync();
+            var manager = await _context.Account.FindAsync(club.Manager_Id);
+            if (manager == null) return NotFound("Khong tim thay du lieu Manager");
+            manager.role = "2";
+            await _context.SaveChangesAsync();
+            return Ok(new { msg = "Tạo yêu cầu mở CLB thành công !!!", success = true });
+        }
+        [HttpGet("accept-event/{id}")]
+        public async Task<IActionResult> AcceptEventById(int id)
+        {
+            try
+            {
+                var events = await _context.Events.FindAsync(id);
+                if (events == null) return NotFound("Khong tim thay du lieu Event");
+                events.Event_status = "3";
+                await _context.SaveChangesAsync();
+                return Ok(new { msg = "Thành công", success = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
+            }
+        }
+        [HttpGet("cancel-event/{id}")]
+        public async Task<IActionResult> CancelEventById(int id)
+        {
+            try
+            {
+                var events = await _context.Events.FindAsync(id);
+                if (events == null) return NotFound("Khong tim thay du lieu Event");
+                events.Event_status = "2";
+                await _context.SaveChangesAsync();
+                return Ok(new { msg = "Đã Từ Chối Tạo Event", success = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
+            }
+        }
+        [HttpPost("create-event")]
+        public async Task<IActionResult> CreateEvent([FromBody] Events events)
+        {
+            if (events == null)
+            {
+                return BadRequest(new { msg = "Dữ liệu không hợp lệ", success = false });
+            }
+            try
+            {
+                // Thêm sự kiện mới vào database
+                _context.Events.Add(events);
+                await _context.SaveChangesAsync();
+                return Ok(new { msg = "Thêm sự kiện thành công", success = true, data = events });
+            }
+            catch (Exception ex)
+            {
+                // Ghi lại lỗi chi tiết
+                var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi khi lưu sự kiện", error = innerExceptionMessage });
+            }
+        }
+        [HttpGet("search-event/{key}")]
+        public async Task<IActionResult> SearchEvent(string key)
+        {
+            try
+            {
+                // Thực hiện truy vấn cơ sở dữ liệu để tìm kiếm các bản tin có tiêu đề chứa từ khóa
+                var matchingEvent = await _context.Events
+                    .Where(n => n.Event_name.Contains(key))
+                    .ToListAsync();
+                // Kiểm tra xem có bản tin nào khớp không
+                if (matchingEvent == null || !matchingEvent.Any())
+                {
+                    return NotFound(new { msg = "Không tìm thấy tin tức với từ khóa này", success = false });
+                }
+                // Trả về kết quả tìm kiếm cho khách hàng
+                return Ok(new { msg = "Thành công", success = true, data = matchingEvent });
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ và trả về thông báo lỗi
+                return BadRequest(new { msg = "Đã xảy ra lỗi", success = false, error = ex.Message });
+            }
+        }
+        [HttpGet("all-event")]
+        public async Task<IActionResult> GetAllEvent()
+        {
+            try
+            {
+                var events = await _context.Events.ToListAsync();
+                return Ok(events);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về response thích hợp
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi khi lấy danh sách sự kiện", error = ex.Message });
+            }
+        }
     }
 }

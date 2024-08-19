@@ -5,7 +5,7 @@
 namespace BEtdtuclubsmanagement.Migrations
 {
     /// <inheritdoc />
-    public partial class NewsTable : Migration
+    public partial class ClubTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

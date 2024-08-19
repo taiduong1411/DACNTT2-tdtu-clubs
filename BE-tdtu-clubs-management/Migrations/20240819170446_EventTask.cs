@@ -5,7 +5,7 @@
 namespace BEtdtuclubsmanagement.Migrations
 {
     /// <inheritdoc />
-    public partial class OtpTable : Migration
+    public partial class EventTask : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

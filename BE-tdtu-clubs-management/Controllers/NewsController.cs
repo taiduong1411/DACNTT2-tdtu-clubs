@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using CloudinaryDotNet;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 namespace BE_tdtu_clubs_management.Controllers
 {
     [Route("api/news")]
@@ -41,7 +43,17 @@ namespace BE_tdtu_clubs_management.Controllers
         [HttpGet("all-news-table")]
         public async Task<IActionResult> AllNews()
         {
-            var newsList = await _context.News.OrderByDescending(n => n.CreatedAt).ToListAsync();
+            var userId = GetUserIdFromToken();
+
+            if (userId == null)
+            {
+                return Unauthorized(new { msg = "User ID không hợp lệ", success = false });
+            }
+            var newsList = await _context.News
+                .Where(n => n.Author == userId)
+                .OrderByDescending(n => n.CreatedAt)
+                .ToListAsync();
+
             return Ok(newsList);
         }
         [HttpGet("all-news")]
@@ -49,6 +61,29 @@ namespace BE_tdtu_clubs_management.Controllers
         {
             var newsList = await _context.News.Where(n => n.Status == "3").OrderByDescending(n => n.CreatedAt).ToListAsync();
             return Ok(newsList);
+        }
+        private string? GetUserIdFromToken()
+        {
+            // Lấy token từ header
+            var token = HttpContext.Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return null;
+            }
+
+            // Giải mã token
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            if (jwtToken == null)
+            {
+                return null;
+            }
+
+            // Lấy user ID từ claim trong token
+            var userId = jwtToken.Claims.First(claim => claim.Type == "sub").Value;
+            return userId;
         }
         [HttpGet("all-news-pagination")]
         public async Task<IActionResult> AllNewsPagination(int pageNumber = 1, int pageSize = 9)
