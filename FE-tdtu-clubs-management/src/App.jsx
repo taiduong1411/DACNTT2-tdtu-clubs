@@ -29,6 +29,11 @@ import ClubManagement from './page/manager/Club/ClubManagement';
 import EventAdmin from './page/admin/Event_/EventAdmin';
 import EventTask from './page/manager/_Event/EventTask';
 import Task from './page/user/Task/Task';
+import Schedule from './page/manager/Schedule/Schedule';
+import Approval from './page/manager/Approval/Approval';
+import Mail from './page/manager/Mail/Mail';
+import ScheduleActivity from './page/user/ScheduleActivity/ScheduleActivity';
+import Attendances from './page/manager/Attendances/Attendances';
 function App() {
   return (
     <BrowserRouter>
@@ -51,6 +56,7 @@ function App() {
           <Route path='/student/news/tag/:tag' element={<NewsByTag />} />
           <Route path='/student/club-detail/:id' element={<ClubDetail />} />
           <Route path='/student/student-task' element={<Task />} />
+          <Route path='/student/schedule-activity' element={<ScheduleActivity />} />
         </Route>
         {/* Manager Club Route */}
         <Route exact path='/' element={<ManagerRoute />}>
@@ -58,7 +64,11 @@ function App() {
           <Route path='/manager/blog-management' element={<Blog />} />
           <Route path='/manager/event-management' element={<Event />} />
           <Route path='/manager/club-management' element={<ClubManagement />} />
+          <Route path='/manager/club-schedule-management' element={<Schedule />} />
+          <Route path='/manager/club-approval-management' element={<Approval />} />
+          <Route path='/manager/club-mail-management' element={<Mail />} />
           <Route path='/manager/event-manager/event-task/:id' element={<EventTask />} />
+          <Route path='/manager/club-schedule-management/attendance/:id' element={<Attendances />} />
         </Route>
         {/* Admin Route */}
         <Route exact path='/' element={<AdminRoute />}>

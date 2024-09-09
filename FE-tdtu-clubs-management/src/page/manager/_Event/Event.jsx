@@ -260,7 +260,7 @@ function Event() {
                             }
                         </Button>
                     </form>
-                </Modal>
+            </Modal>
         </div>
     );
 }

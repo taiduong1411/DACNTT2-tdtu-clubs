@@ -114,5 +114,93 @@ namespace BE_tdtu_clubs_management.Controllers
             public string? Student_Id { get; set; }
             public int Club_Id { get; set; }
         }
+        [HttpGet("my-schedule")]
+        public async Task<IActionResult> GetStudentSchedule()
+        {
+            try
+            {
+                // Lấy student_id từ token
+                var studentId = GetUserIdFromToken();
+                if (string.IsNullOrEmpty(studentId))
+                {
+                    return Unauthorized(new { msg = "Không thể xác thực người dùng", success = false });
+                }
+
+                // Tìm tất cả các club mà sinh viên này tham gia
+                var clubIds = await _context.Club_Members
+                    .Where(cm => cm.Student_id == studentId && cm.Status == "3")
+                    .Select(cm => cm.Club_id)
+                    .ToListAsync();
+
+                if (!clubIds.Any())
+                {
+                    return NotFound(new { msg = "Sinh viên không tham gia câu lạc bộ nào", success = false });
+                }
+
+                // Lấy lịch sinh hoạt và tên câu lạc bộ
+                var schedules = await (from s in _context.Schedules
+                                       join c in _context.Clubs on s.Club_Id equals c.Id
+                                       where clubIds.Contains(s.Club_Id)
+                                       select new
+                                       {
+                                           s.Id,
+                                           s.Date,
+                                           s.Time,
+                                           s.Location,
+                                           s.Content,
+                                           s.Status,
+                                           s.Teacher_name,
+                                           ClubName = c.Club_name, // Lấy tên câu lạc bộ
+                                           ClubId = c.Id
+                                       }).ToListAsync();
+
+                if (!schedules.Any())
+                {
+                    return NotFound(new { msg = "Không tìm thấy lịch sinh hoạt nào", success = false });
+                }
+
+                return Ok(new { msg = "Lấy lịch sinh hoạt thành công", success = true, schedules });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi khi lấy lịch sinh hoạt", success = false, error = ex.Message });
+            }
+        }
+        [HttpPost("attendances")]
+        public async Task<IActionResult> Attendances([FromBody] Attendances attendance)
+        {
+            try
+            {
+                // Lấy student_id từ token
+                var studentId = GetUserIdFromToken();
+                if (string.IsNullOrEmpty(studentId))
+                {
+                    return Unauthorized(new { msg = "Không thể xác thực người dùng", success = false });
+                }
+
+                // Thiết lập các thông tin cần thiết cho điểm danh
+                attendance.Student_Id = studentId;
+
+                // Kiểm tra nếu đã tồn tại điểm danh cho cùng lịch
+                var existingAttendance = await _context.Attendances
+                    .FirstOrDefaultAsync(a => a.Student_Id == studentId && a.Schedules_Id == attendance.Schedules_Id);
+
+                if (existingAttendance != null)
+                {
+                    return Conflict(new { msg = "Sinh viên đã được điểm danh cho lịch sinh hoạt này", success = false });
+                }
+
+                // Thêm lịch sử điểm danh vào database
+                _context.Attendances.Add(attendance);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { msg = "Điểm danh thành công", success = true, data = attendance });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi khi lưu lịch sử điểm danh", success = false, error = ex.Message });
+            }
+        }
+
     }
 }

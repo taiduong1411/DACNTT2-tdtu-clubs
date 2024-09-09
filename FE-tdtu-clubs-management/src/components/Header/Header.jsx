@@ -257,19 +257,28 @@ const Header = () => {
                         {isClickDropdown
                             ?
                             <ul className='text-center pt-1 pb-4'>
-                                <Link to="/student/my-club">
+                                {/* <Link to="/student/my-club">
                                     <li className='hover:bg-[#f0f0f0] p-3 flex items-center'>
                                         <svg xmlns="http://www.w3.org/2000/svg" className='flex items-center mx-4' viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18.0004 17V22H16.0004V17C16.0004 12.5487 18.6444 8.71498 22.4475 6.98352L23.2753 8.8047C20.1637 10.2213 18.0004 13.3581 18.0004 17ZM8.00045 17V22H6.00045V17C6.00045 13.3581 3.83723 10.2213 0.725586 8.8047L1.55339 6.98352C5.35651 8.71498 8.00045 12.5487 8.00045 17ZM12.0004 12C9.23902 12 7.00045 9.76142 7.00045 7C7.00045 4.23858 9.23902 2 12.0004 2C14.7619 2 17.0004 4.23858 17.0004 7C17.0004 9.76142 14.7619 12 12.0004 12ZM12.0004 10C13.6573 10 15.0004 8.65685 15.0004 7C15.0004 5.34315 13.6573 4 12.0004 4C10.3436 4 9.00045 5.34315 9.00045 7C9.00045 8.65685 10.3436 10 12.0004 10Z"></path></svg>
                                         CLB Của Tôi</li>
-                                </Link>
+                                </Link> */}
                                 <Link to="/student/create-club">
                                     <li className='hover:bg-[#f0f0f0] p-3 flex items-center cursor-pointer'>
                                         <svg xmlns="http://www.w3.org/2000/svg" className='flex items-center mx-4' viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15 4H5V20H19V8H15V4ZM3 2.9918C3 2.44405 3.44749 2 3.9985 2H16L20.9997 7L21 20.9925C21 21.5489 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5447 3 21.0082V2.9918ZM11 11V8H13V11H16V13H13V16H11V13H8V11H11Z"></path></svg>
                                         Yêu Cầu Mở CLB</li>
                                 </Link>
-                                <li className='hover:bg-[#f0f0f0] p-3 flex items-center cursor-pointer'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className='flex items-center mx-4' viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20.0049 2C21.1068 2 22 2.89821 22 3.9908V20.0092C22 21.1087 21.1074 22 20.0049 22H4V18H2V16H4V13H2V11H4V8H2V6H4V2H20.0049ZM8 4H6V20H8V4ZM20 4H10V20H20V4Z"></path></svg>
-                                    Học Vụ</li>
+                                <Link to="/student/schedule-activity">
+                                    <li className='hover:bg-[#f0f0f0] p-3 flex items-center cursor-pointer'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className='flex items-center mx-4' viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20.0049 2C21.1068 2 22 2.89821 22 3.9908V20.0092C22 21.1087 21.1074 22 20.0049 22H4V18H2V16H4V13H2V11H4V8H2V6H4V2H20.0049ZM8 4H6V20H8V4ZM20 4H10V20H20V4Z"></path></svg>
+                                        Hoạt Động CLB
+                                    </li>
+                                </Link>
+                                <Link>
+                                    <li className='hover:bg-[#f0f0f0] p-3 flex items-center cursor-pointer'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className='flex items-center mx-4' viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M19 22H5C3.34315 22 2 20.6569 2 19V3C2 2.44772 2.44772 2 3 2H17C17.5523 2 18 2.44772 18 3V15H22V19C22 20.6569 20.6569 22 19 22ZM18 17V19C18 19.5523 18.4477 20 19 20C19.5523 20 20 19.5523 20 19V17H18ZM16 20V4H4V19C4 19.5523 4.44772 20 5 20H16ZM6 7H14V9H6V7ZM6 11H14V13H6V11ZM6 15H11V17H6V15Z"></path></svg>
+                                        Nộp Đơn
+                                    </li>
+                                </Link>
                             </ul>
                             :
                             ''

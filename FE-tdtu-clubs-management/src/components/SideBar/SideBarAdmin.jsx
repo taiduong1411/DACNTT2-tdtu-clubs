@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout, Menu, Badge } from 'antd';
 const { Sider } = Layout;
 import { useState, useEffect } from 'react';
+import { LogoutOutlined } from '@ant-design/icons';
 
 import * as signalR from "@microsoft/signalr";
 
@@ -99,6 +100,13 @@ function SideBarAdmin({ props }) {
                                 </Badge>,
                                 label: <Link to="/admin/mailbox" rel="noopener noreferrer">
                                     Hộp Thư
+                                </Link>,
+                            },
+                            {
+                                key: '6',
+                                icon: <LogoutOutlined />,
+                                label: <Link to="/login" rel="noopener noreferrer">
+                                    Logout
                                 </Link>,
                             },
                         ]

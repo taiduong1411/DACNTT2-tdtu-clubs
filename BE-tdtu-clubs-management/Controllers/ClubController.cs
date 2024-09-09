@@ -395,6 +395,151 @@ namespace BE_tdtu_clubs_management.Controllers
                 return StatusCode(500, new { msg = "Đã xảy ra lỗi khi lấy danh sách report", error = ex.Message });
             }
         }
+        [HttpGet("all-schedule")]
+        public async Task<IActionResult> AllSchedule()
+        {
+            try
+            {
+                var studentId = GetUserIdFromToken();
+                if (string.IsNullOrEmpty(studentId))
+                {
+                    return Unauthorized(new { msg = "Dữ liệu không tồn tại" });
+                }
+                // Tìm kiếm Club_Id dựa trên Manager_Id
+                var club = await _context.Clubs.FirstOrDefaultAsync(c => c.Manager_Id == studentId);
+                if (club == null)
+                {
+                    return NotFound(new { msg = "Không tìm thấy CLB nào cho quản lý này" });
+                }
+                var schedules = await _context.Schedules.Where(s => s.Club_Id == club.Id).ToListAsync();
+                return Ok(schedules);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi", error = ex.Message });
+            }
+        }
+        [HttpPost("create-schedule")]
+        public async Task<IActionResult> CreateSchedule([FromBody] Schedules schedules)
+        {
+            try
+            {
+                var studentId = GetUserIdFromToken();
+                if (string.IsNullOrEmpty(studentId))
+                {
+                    return Unauthorized(new { msg = "Dữ liệu không tồn tại" });
+                }
+
+                // Tìm kiếm Club_Id dựa trên Manager_Id
+                var club = await _context.Clubs.FirstOrDefaultAsync(c => c.Manager_Id == studentId);
+                if (club == null)
+                {
+                    return NotFound(new { msg = "Không tìm thấy CLB nào cho quản lý này" });
+                }
+
+                // Gán Club_Id vào schedules
+                schedules.Club_Id = club.Id;
+
+                // Lưu schedules vào database
+                _context.Schedules.Add(schedules);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { msg = "Tạo lịch thành công", success = true, data = schedules });
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi", error = ex.Message });
+            }
+        }
+        [HttpDelete("delete-schedule/{delId}")]
+        public async Task<IActionResult> DeleteSchedule(int delId)
+        {
+            var schedules = await _context.Schedules.FindAsync(delId);
+            if (schedules == null)
+            {
+                return NotFound(new { msg = "Không tìm thấy lịch hoạt động", success = false });
+            }
+
+            // Xóa lịch hoạt động khỏi cơ sở dữ liệu
+            _context.Schedules.Remove(schedules);
+            await _context.SaveChangesAsync();
+
+            // Trả về phản hồi thành công
+            return Ok(new { msg = "Xóa lịch hoạt động thành công", success = true });
+        }
+        [HttpPost("update-schedule/{id}")]
+        public async Task<IActionResult> UpdateSchedule(int id, [FromBody] Schedules updatedSchedule)
+        {
+            if (updatedSchedule == null)
+            {
+                return BadRequest(new { msg = "Dữ liệu không hợp lệ", success = false });
+            }
+
+            try
+            {
+                // Tìm kiếm lịch sinh hoạt theo ID
+                var existingSchedule = await _context.Schedules.FindAsync(id);
+                if (existingSchedule == null)
+                {
+                    return NotFound(new { msg = "Không tìm thấy lịch sinh hoạt", success = false });
+                }
+
+                // Cập nhật dữ liệu của lịch sinh hoạt
+                existingSchedule.Date = updatedSchedule.Date;
+                existingSchedule.Time = updatedSchedule.Time;
+                existingSchedule.Status = updatedSchedule.Status;
+                existingSchedule.Location = updatedSchedule.Location;
+                existingSchedule.Teacher_name = updatedSchedule.Teacher_name;
+                existingSchedule.Content = updatedSchedule.Content;
+                existingSchedule.UpdatedAt = DateTime.UtcNow;
+                // Lưu các thay đổi vào database
+                _context.Schedules.Update(existingSchedule);
+                await _context.SaveChangesAsync();
+                return Ok(new { msg = "Cập nhật lịch sinh hoạt thành công", success = true });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi khi cập nhật lịch sinh hoạt", success = false, error = ex.Message });
+            }
+        }
+        [HttpGet("attendances-list/{scheduleId}")]
+        public async Task<IActionResult> GetAttendancesList(int scheduleId)
+        {
+            try
+            {
+                // Lấy thông tin lịch sinh hoạt từ scheduleId
+                var schedule = await _context.Schedules.FindAsync(scheduleId);
+                if (schedule == null)
+                {
+                    return NotFound(new { msg = "Không tìm thấy lịch sinh hoạt", success = false });
+                }
+
+                // Lấy danh sách điểm danh theo schedule_id
+                var attendanceList = await (from cm in _context.Club_Members
+                                            join a in _context.Account on cm.Student_id equals a.student_Id
+                                            join att in _context.Attendances on new { Student_id = cm.Student_id, Schedules_Id = scheduleId } equals new { Student_id = att.Student_Id, att.Schedules_Id } into attendanceGroup
+                                            from att in attendanceGroup.DefaultIfEmpty() // Left join để lấy tất cả sinh viên, kể cả sinh viên chưa điểm danh
+                                            where cm.Club_id == schedule.Club_Id
+                                            select new
+                                            {
+                                                StudentId = cm.Student_id,
+                                                StudentName = a.full_name,
+                                                AttendanceCreatedAt = att != null ? att.CreatedAt : (DateTime?)null
+                                            }).ToListAsync();
+
+                if (!attendanceList.Any())
+                {
+                    return NotFound(new { msg = "Không tìm thấy danh sách điểm danh", success = false });
+                }
+
+                return Ok(new { msg = "Lấy danh sách điểm danh thành công", success = true, attendanceList });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { msg = "Đã xảy ra lỗi khi lấy danh sách điểm danh", success = false, error = ex.Message });
+            }
+        }
+
 
     }
 }

@@ -23,6 +23,8 @@ namespace BE_tdtu_clubs_management.Data
         public DbSet<Events> Events { get; set; }
         public DbSet<Event_Task> Tasks { get; set; }
         public DbSet<Report> Reports { get; set; }
+        public DbSet<Schedules> Schedules { get; set; }
+        public DbSet<Attendances> Attendances { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -37,6 +39,8 @@ namespace BE_tdtu_clubs_management.Data
             modelBuilder.Entity<Events>().HasKey(a => a.Id);
             modelBuilder.Entity<Event_Task>().HasKey(a => a.Id);
             modelBuilder.Entity<Report>().HasKey(a => a.Id);
+            modelBuilder.Entity<Schedules>().HasKey(a => a.Id);
+            modelBuilder.Entity<Attendances>().HasKey(a => a.Id);
         }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
